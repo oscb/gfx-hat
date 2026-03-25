@@ -1,8 +1,14 @@
 #!/usr/bin/env python
 
 from gfxhat import lcd, backlight, fonts
+from gfxhat.st7567 import ST7567_SETCONTRAST
 from PIL import Image, ImageFont, ImageDraw
 import time
+
+
+def set_contrast(c):
+    lcd.st7567.setup()
+    lcd.st7567._command([ST7567_SETCONTRAST, c])
 
 print("""
 
@@ -32,7 +38,8 @@ def scan_contrast():
 
         message = "Contrast: {:02d}".format(c)
 
-        w, h = font.getsize(message)
+        bbox = font.getbbox(message)
+        w, h = bbox[2] - bbox[0], bbox[3] - bbox[1]
         left, top = (width - w) / 2, (height - h) / 2
 
         draw.text((left, top), message, 1, font=font)
@@ -42,7 +49,7 @@ def scan_contrast():
                 pixel = image.getpixel((x, y))
                 lcd.set_pixel(x, y, pixel)
 
-        lcd.contrast(c)
+        set_contrast(c)
         lcd.show()
         time.sleep(0.4)
 
@@ -57,22 +64,22 @@ backlight.show()
 
 
 try:
-    lcd.contrast(0)
+    set_contrast(0)
     scan_contrast()
 
-    lcd.contrast(0)
+    set_contrast(0)
     backlight.set_all(255, 255, 255)
     backlight.show()
 
     scan_contrast()
-    lcd.contrast(0)
+    set_contrast(0)
 
     backlight.set_all(0, 0, 0)
     backlight.show()
     print("Done!")
 
 except KeyboardInterrupt:
-    lcd.contrast(0)
+    set_contrast(0)
     backlight.set_all(0, 0, 0)
     backlight.show()
     print("Quit via keyboard.")

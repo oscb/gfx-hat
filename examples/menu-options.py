@@ -19,10 +19,10 @@ Press Ctrl+C or select "Exit" to exit.
 width, height = lcd.dimensions()
 
 # A squarer pixel font
-#font = ImageFont.truetype(fonts.BitocraFull, 11)
+font = ImageFont.truetype(fonts.BitocraFull, 11)
 
 # A slightly rounded, Ubuntu-inspired version of Bitocra
-font = ImageFont.truetype(fonts.BitbuntuFull, 10)
+# font = ImageFont.truetype(fonts.BitbuntuFull, 10)
 
 image = Image.new('P', (width, height))
 
@@ -33,8 +33,9 @@ class MenuOption:
         self.name = name
         self.action = action
         self.options = options
-        self.size = font.getsize(name)
-        self.width, self.height = self.size
+        bbox = font.getbbox(name)
+        self.width, self.height = bbox[2] - bbox[0], bbox[3] - bbox[1]
+        self.size = (self.width, self.height)
 
     def trigger(self):
         self.action(*self.options)
@@ -105,7 +106,8 @@ try:
                 draw.rectangle(((x-2, y-1), (width, y+10)), 1)
             draw.text((x, y), option.name, 0 if index == current_menu_option else 1, font)
 
-        w, h = font.getsize('>')
+        bbox = font.getbbox('>')
+        w, h = bbox[2] - bbox[0], bbox[3] - bbox[1]
         draw.text((0, (height - h) / 2), '>', 1, font)
 
         for x in range(width):

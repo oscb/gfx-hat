@@ -28,7 +28,8 @@ font = ImageFont.truetype(fonts.AmaticSCBold, 38)
 
 text = "Hello World"
 
-w, h = font.getsize(text)
+bbox = font.getbbox(text)
+w, h = bbox[2] - bbox[0], bbox[3] - bbox[1]
 
 x = (width - w) // 2
 y = (height - h) // 2
